@@ -1,0 +1,169 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background:#000000;  /* Removed gradient because particles will be used */
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden; /* To prevent scrollbars from appearing */
+  color: white;
+  position: relative;
+}
+
+#particles-js {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1;  /* To make sure it stays behind the content */
+}
+
+.container {
+  text-align: center;
+  padding: 20px;
+  position: relative;
+  z-index: 2;  /* To keep the content above the particle background */
+}
+
+h1 {
+  font-size: 4em;
+  color: #e0ffff;
+  text-shadow: 3px 3px #ff4500;
+}
+
+.subtitle {
+  font-size: 1.2em;
+  color: #b0c4de;
+  margin-top: 10px;
+}
+
+form {
+  margin-top: 30px;
+}
+
+.upload-btn {
+  background-color:#ff4500;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+.upload-btn:hover {
+  background-color: #ff5a00;
+  color: white;
+}
+
+.output-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+h2 {
+  font-size: 2em;
+  color: #ffa500;
+}
+
+pre {
+  background-color: #404040;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 1em;
+  max-height: 400px;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 700px;
+  margin: 20px auto;
+}
+
+.download-btn {
+  background-color: #32cd32;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+}
+
+.download-btn:hover {
+  background-color: #2aad2a;
+  color: white;
+}
+
+/* Center title at the top */
+#title-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center horizontally */
+  justify-content: center;
+  transition: opacity 0.5s ease;
+}
+
+#easyml-title {
+  font-size: 4em;
+  color: #e0ffff;
+  text-shadow: 3px 3px #ff4500;
+
+}
+
+/* Centered layout for form content */
+#upload-screen .form-content {
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: rgb(0 0 0 / .7); /* Dark background for form section */
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.5);
+  opacity: 1; /* Initially hidden, shown by JavaScript */
+ 
+  transition: opacity 0.5s ease; /* Transition for opacity */
+}
+
+#upload-screen .form-group {
+  margin: 20px 0;
+}
+
+#upload-screen .form-group label {
+  font-size: 1.1em;
+  color: #b0c4de;
+  display: block;
+  margin-bottom: 8px;
+}
+
+#upload-screen .form-group input,
+#upload-screen .form-group select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #666;
+  border-radius: 5px;
+  background-color: #222;
+  color: #e0ffff;
+}
+
+#upload-screen .upload-btn {
+  background-color: #ff4500;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1.2em;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+#upload-screen .upload-btn:hover {
+  background-color: #ff5a00;
+}
