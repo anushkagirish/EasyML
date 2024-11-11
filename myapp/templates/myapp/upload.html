@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyML - Upload CSV File</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+</head>
+<body>
+    <!-- Particle background -->
+    <div id="particles-js"></div>
+
+    <!-- EasyML Title and Welcome Section -->
+    <div class="container" id="welcome-screen">
+        <div class="content" id="title-section">
+            <h1 id="easyml-title">EasyML</h1>
+            <p class="subtitle">Give your machine learning journey a new and easy way!</p>
+            <br>
+            <br>
+            <button class="upload-btn" id="start-btn">Let's Get Started!</button>
+        </div>
+    </div>
+
+    <!-- Upload form section (initially hidden) -->
+    <div class="container" id="upload-screen" style="display: none;">
+        <div class="form-content">
+            <h2>Upload CSV File</h2>
+            <h2>Select Model Type</h2>
+            <form  id="upload-form" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <!-- File upload field -->
+                <div class="form-group">
+                    {{ form.file.label_tag }}
+                    {{ form.file }}
+                    <small id="file-error" style="color: red; display: none;">Only CSV files are allowed.</small>
+                    {{ form.file.errors }}
+                </div>
+
+                <!-- Model type dropdown field -->
+                <div class="form-group">
+                    {{ form.model_type.label_tag }}
+                    {{ form.model_type }}
+                    {{ form.model_type.errors }}
+                </div>
+
+                <!-- Submit button -->
+                <button type="submit" class="upload-btn">Upload and Preprocess</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="{% static 'myapp/main.js' %}"></script>
+    <script src="{% static 'myapp/particles-config.js' %}"></script>
+    
+    <!-- Custom JavaScript for the transition effect -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+
+            const fileInput = document.querySelector('input[type="file"]');
+            const uploadButton = document.getElementById("upload-btn");
+            const fileError = document.getElementById("file-error");
+            const uploadForm = document.getElementById("upload-form");
+
+             // Disable form submission for non-CSV files
+             uploadForm.addEventListener("submit", function(event) {
+                const file = fileInput.files[0];
+                if (!file || !file.name.endsWith(".csv")) {
+                    event.preventDefault();  // Prevent form submission
+                    fileError.style.display = "block";
+                    uploadButton.disabled = true;
+                }
+            });
+            
+            fileInput.addEventListener("change", function() {
+                const file = fileInput.files[0];
+                
+                if (file && !file.name.endsWith(".csv")) {
+                    // Show error message and disable the upload button
+                    fileError.style.display = "block";
+                    uploadButton.disabled = true;
+                } else {
+                    // Hide error message and enable the upload button
+                    fileError.style.display = "none";
+                    uploadButton.disabled = false;
+                }
+            });
+        
+
+            const startBtn = document.getElementById("start-btn");
+            const welcomeScreen = document.getElementById("welcome-screen");
+            const titleSection = document.getElementById("title-section");
+            const uploadScreen = document.getElementById("upload-screen");
+            const easymlTitle = document.getElementById("easyml-title");
+
+            // Handle the "Let's Get Started!" button click
+            startBtn.addEventListener("click", function() {
+                // Move the title section upward and reveal the upload form
+                titleSection.style.position = "relative";
+                titleSection.style.left = "50%";  // Center horizontally
+                titleSection.style.transform = "translateX(-50%)"; // Adjust for horizontal centering
+
+                // Fade out subtitle and start button
+                startBtn.style.opacity = "0";
+                document.querySelector(".subtitle").style.opacity = "0";
+
+                // After moving the title, show the upload screen
+                setTimeout(function() {
+                    uploadScreen.style.display = "block";
+                    uploadScreen.style.opacity = "1";
+                }, 170); // Delay matches the transition time
+            });
+        });
+    </script>
+</body>
+</html>

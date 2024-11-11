@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyML - Processed Data</title>
+
+    {% load static %}
+    <!-- Bootstrap CSS for table and general styling -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+
+    <style>
+        /* Ensure the page itself is scrollable */
+        body {
+            overflow-y: auto;
+            margin-top: 10vh;
+        }
+        
+
+        /* Custom styles for the table */
+        .table-container {
+            max-height: 500px; /* Set max height for the table only */
+            overflow-y: auto;  /* Enable vertical scrolling within table area */
+            margin-bottom: 20px; /* Add space below table */
+            background-color: rgba(29, 28, 28, 0.8); /* Translucent dark background */
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+
+        .table th, .table td {
+            color: white !important;
+        }
+
+        .table {
+            background-color: rgba(29, 28, 28, 0.8);
+            border: 1px solid #444;
+        } 
+
+        .upload-btn:hover {
+            background-color: #ff5a00;
+            color: white;
+        }
+
+        .download-btn:hover {
+            background-color:#2aad2a;
+            color: white;
+        }
+
+        /* Custom scrollbar styling for .table-container */
+        .table-container::-webkit-scrollbar {
+            width: 8px;               /* Width of the scrollbar */
+        }
+
+.table-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1); /* Track color (light translucent) */
+    border-radius: 10px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+    background-color: #ff4500; /* Scrollbar thumb color */
+    border-radius: 10px;       /* Rounded corners on the thumb */
+    border: 2px solid #333;    /* Border for a subtle outline */
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+    background-color: #ff6347; /* Hover color for the scrollbar thumb */
+}
+
+    </style>
+</head>
+<body>
+    <!-- Particle background effect -->
+    <div id="particles-js"></div>
+
+    <!-- Main content container -->
+    <div class="container mt-5 text-center">
+        
+        <p class="subtitle">Your preprocessed CSV data is ready!</p>
+        
+        <h2 class="mt-4">Preprocessed CSV Data (First 10 Rows)</h2>
+        <h4 class="text-muted mb-4">Model Selected: {{ model }}</h4>
+
+        <!-- Table container for data display -->
+        <div class="table-container table-responsive">
+            {{ data|safe }}
+        </div>
+
+        <!-- Buttons for upload and download actions -->
+        <div class="mt-4">
+            <a href="{% url 'upload_file' %}" class="btn upload-btn mr-2">Upload Another File</a>
+            <a href="{% url 'download_preprocessed_csv' %}" class="btn download-btn">Download Preprocessed Data as CSV</a>
+        </div>
+    </div>
+
+    <!-- Scripts for particles.js and Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="{% static 'myapp/particles-config.js' %}"></script>
+</body>
+</html>
