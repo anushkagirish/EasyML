@@ -77,10 +77,10 @@
     <!-- Main content container -->
     <div class="container mt-5 text-center">
         
-        <p class="subtitle">Your preprocessed CSV data is ready!</p>
+        <p class="subtitle">Your data is ready!</p>
         
-        <h2 class="mt-4">Preprocessed CSV Data (First 10 Rows)</h2>
-        <h4 class="text-muted mb-4">Model Selected: {{ model }}</h4>
+        <h2 class="mt-4"><b>Preprocessed CSV Data (First 10 Rows)</b></h2>
+        <h4 class="text-muted mb-4">Model Type Selected: {{ model }}</h4>
 
         <!-- Table container for data display -->
         <div class="table-container table-responsive">
@@ -89,8 +89,9 @@
 
         <!-- Buttons for upload and download actions -->
         <div class="mt-4">
-            <a href="{% url 'upload_file' %}" class="btn upload-btn mr-2">Upload Another File</a>
-            <a href="{% url 'download_preprocessed_csv' %}" class="btn download-btn">Download Preprocessed Data as CSV</a>
+            <a href="{% url 'upload_file' %}" class="btn upload-btn ">Upload Another File</a>
+            <a href="{% url 'download_preprocessed_csv' %}" class="btn download-btn">Download Preprocessed Data</a>
+            <a href="{% url 'select_task_model' %}" class="btn upload-btn mr-2">Proceed</a>
         </div>
     </div>
 

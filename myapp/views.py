@@ -182,6 +182,9 @@ def upload_file(request):
         if form.is_valid():
             uploaded_file = request.FILES['file']
             model_type = form.cleaned_data['model_type']
+             # Store the selected model type in the session
+            request.session['model_type'] = model_type
+
             data = pd.read_csv(uploaded_file)     
 
         # Preprocess the dataset
@@ -213,4 +216,154 @@ def download_preprocessed_csv(request):
         return response
 
     return HttpResponse("No preprocessed data to download.", status=400)
+
+from django.shortcuts import render, redirect
+
+# Define the form dynamically based on the earlier choice (tree-based or other)
+def select_task_model(request):
+    model_type = request.session.get('model_type', None)  # Retrieve model_type from session
+    if not model_type:
+        return redirect('upload_file')  # Redirect if model_type is not set
+
+    # Define task and model options based on the model type
+    task_options = ['classification', 'regression'] if model_type == 'tree-based' else ['classification', 'regression', 'clustering']
+    model_options = {
+        'classification': ['decision_tree', 'random_forest', 'xgboost'] if model_type == 'tree-based' else ['logistic_regression', 'svm', 'knn', 'naive_bayes'],
+        'regression': ['decision_tree', 'random_forest', 'xgboost'] if model_type == 'tree-based' else ['linear_regression', 'svm', 'knn'],
+        'clustering': ['kmeans', 'dbscan'],
+    }
+
+    if request.method == "POST":
+        # Get the selected task and model
+        task_type = request.POST.get('task_type')
+        model_type_selected = request.POST.get('model_type')
+
+        # Get the preprocessed data
+        csv_data = request.session.get('preprocessed_csv_data')
+        if not csv_data:
+            return redirect('upload_file')
+
+        # Convert CSV string back to DataFrame
+        import pandas as pd
+        from io import StringIO
+        preprocessed_data = pd.read_csv(StringIO(csv_data))
+
+        # Apply the ML model and generate insights
+        model, insights = apply_ml_model(preprocessed_data, task_type, model_type_selected)
+
+
+
+        # Store insights in the session for display on the results page
+        request.session['results'] = {
+            "task_type": task_type,
+            "model_type_selected": model_type_selected,
+            "insights": insights,
+        }
+
+        return redirect('results_page')
+        
+
+    # Render the page for selecting task and model
+    return render(request, "myapp/select_task_model.html", {
+        "task_options": task_options,
+        "model_options": model_options,
+        "results_displayed": False,
+    })
+
+def results_page(request):
+    results = request.session.get('results', None)
+    if not results:
+        return redirect('select_task_model')  # Redirect if no results are available
+
+    return render(request, "myapp/results.html", {
+        "task_type": results["task_type"],
+        "model_type_selected": results["model_type_selected"],
+        "insights": results["insights"],
+    })
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression, LinearRegression
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
+from sklearn.svm import SVC, SVR
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.cluster import KMeans, DBSCAN
+from sklearn.metrics import (
+    classification_report,
+    confusion_matrix,
+    accuracy_score,
+    mean_squared_error,
+    silhouette_score,
+)
+import pandas as pd
+
+def apply_ml_model(df, task_type, model_type):
+    """Apply selected ML model and return insights."""
+    X = df.iloc[:, :-1]  # Features (all columns except the last one)
+    y = df.iloc[:, -1]   # Target (last column)
+    insights = {}
+
+    if task_type in ['classification', 'regression']:
+        # Split data into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Classification Models
+        if task_type == 'classification':
+            if model_type == 'logistic_regression':
+                model = LogisticRegression()
+            elif model_type == 'decision_tree':
+                model = DecisionTreeClassifier()
+            elif model_type == 'random_forest':
+                model = RandomForestClassifier()
+            elif model_type == 'svm':
+                model = SVC()
+            elif model_type == 'knn':
+                model = KNeighborsClassifier()
+            elif model_type == 'naive_bayes':
+                model = GaussianNB()
+
+            # Train and predict
+            model.fit(X_train, y_train)
+            predictions = model.predict(X_test)
+
+            # Insights
+            insights['accuracy'] = accuracy_score(y_test, predictions)
+            insights['classification_report'] = classification_report(y_test, predictions, output_dict=True)
+            insights['confusion_matrix'] = confusion_matrix(y_test, predictions)
+
+        # Regression Models
+        elif task_type == 'regression':
+            if model_type == 'linear_regression':
+                model = LinearRegression()
+            elif model_type == 'decision_tree':
+                model = DecisionTreeRegressor()
+            elif model_type == 'random_forest':
+                model = RandomForestRegressor()
+            elif model_type == 'svm':
+                model = SVR()
+
+            # Train and predict
+            model.fit(X_train, y_train)
+            predictions = model.predict(X_test)
+
+            # Insights
+            insights['mean_squared_error'] = mean_squared_error(y_test, predictions)
+
+    elif task_type == 'clustering':
+        # Clustering Models
+        if model_type == 'kmeans':
+            model = KMeans(n_clusters=3)  # Example: 3 clusters
+            model.fit(X)
+            predictions = model.labels_
+            insights['silhouette_score'] = silhouette_score(X, predictions)
+            insights['cluster_centers'] = model.cluster_centers_
+
+        elif model_type == 'dbscan':
+            model = DBSCAN()
+            model.fit(X)
+            predictions = model.labels_
+            insights['silhouette_score'] = silhouette_score(X, predictions)
+
+    return model, insights
 

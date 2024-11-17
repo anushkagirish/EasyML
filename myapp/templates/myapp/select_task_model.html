@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Task and Model</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+</head>
+<style>
+    /* Adjust container layout */
+.container {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column; /* Or row if needed */
+    align-items: flex-start;
+}
+
+/* Styling for dropdowns */
+select.form-control {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Styling for the right column results */
+pre {
+    text-align: start;
+    background-color: rgb(0 0 0 / .7); /* Match translucent style */
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1em;
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 0;
+    width: auto; /* or a specific width like 80% */
+
+
+}
+
+/* Button styling */
+.upload-btn {
+    background-color: #ff4500;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.upload-btn:hover {
+    background-color: #ff6347;
+}
+
+/* Adjust spacing in content sections */
+.content {
+    padding: 20px;
+    background-color: rgb(0 0 0 / .7);
+    border-radius: 10px;
+}
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1em;
+  border: 1px solid #666;
+  border-radius: 5px;
+  background-color: #222;
+  color: #e0ffff;
+}
+
+</style>
+<body>
+    <!-- Particle background -->
+    <div id="particles-js"></div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Left Column: Task and Model Selection -->
+            <div class="col-md-6">
+                <div class="content">
+                    <h1 class="text-center" id="easyml-title">EasyML</h1>
+                    <p class="subtitle text-center">Select Task and Model</p>
+
+                    {% if not results_displayed %}
+                        <form method="POST" class="mt-4">
+                            {% csrf_token %}
+
+                            <!-- Task type selection -->
+                            <div class="form-group">
+                                <label for="task_type">Select Task Type:</label>
+                                <select name="task_type" class="form-control" id="task_type" required>
+                                    {% for task in task_options %}
+                                        <option value="{{ task }}">{{ task|title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Model type selection -->
+                            <div class="form-group">
+                                <label for="model_type">Select Model:</label>
+                                <select name="model_type" class="form-control" id="model_type" required></select>
+                            </div>
+
+                            <button type="submit" class="upload-btn">Run Model</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Right Column: Results Display -->
+            <div class="col-md-6">
+                {% if results_displayed %}
+                    <div class="content">
+                        <h2 class="text-center">Results</h2>
+                        <p>Task: <strong>{{ task_type|title }}</strong></p>
+                        <p>Model: <strong>{{ model_type_selected|title }}</strong></p>
+                        
+                        <!-- Display classification report -->
+                        {% if insights.classification_report %}
+                            <h3>Classification Report:</h3>
+                            <pre>{{ insights.classification_report }}</pre>
+                        {% endif %}
+
+                        <!-- Display regression metrics -->
+                        {% if insights.mean_squared_error %}
+                            <h3>Mean Squared Error:</h3>
+                            <pre>{{ insights.mean_squared_error }}</pre>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Include particle effects and main.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="{% static 'myapp/particles-config.js' %}"></script>
+    <script src="{% static 'myapp/main.js' %}"></script>
+
+    <!-- Pass model options using JSON -->
+    <script id="model-options-data" type="application/json">
+        {{ model_options|json_script:"model-options" }}
+    </script>
+
+    <!-- JavaScript for dynamically populating model options -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const taskTypeSelect = document.getElementById("task_type");
+            const modelTypeSelect = document.getElementById("model_type");
+
+            // Parse model options passed via JSON
+            //const modelOptions = JSON.parse(document.getElementById("model-options-data").textContent);
+            const modelOptions = {{ model_options|safe }};
+
+            taskTypeSelect.addEventListener("change", function () {
+                const selectedTask = taskTypeSelect.value;
+
+                // Clear existing options
+                modelTypeSelect.innerHTML = "";
+
+                // Populate models for the selected task
+                if (modelOptions[selectedTask]) {
+                    modelOptions[selectedTask].forEach(model => {
+                        const option = document.createElement("option");
+                        option.value = model;
+                        option.textContent = model.replace("_", " ");
+                        modelTypeSelect.appendChild(option);
+                    });
+                }
+            });
+
+            // Trigger initial population
+            taskTypeSelect.dispatchEvent(new Event("change"));
+        });
+    </script>
+</body>
+</html>

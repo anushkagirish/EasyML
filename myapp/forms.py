@@ -5,6 +5,28 @@ MODEL_CHOICES = [
         ('other', 'Linear Models (e.g., Logistic Regression, SVM)'),
     ]
 
+# TASK_CHOICES = [
+#     ('classification', 'Classification'),
+#     ('regression', 'Regression'),
+#     ('clustering', 'Clustering'),
+# ]
+
+# # Model-specific choices
+# MODEL_SELECTION = {
+#     'tree-based': [
+#         ('random_forest', 'Random Forest'),
+#         ('decision_tree', 'Decision Tree'),
+#     ],
+#     'other': [
+#         ('logistic_regression', 'Logistic Regression'),
+#         ('svm', 'Support Vector Machine'),
+#         ('linear_regression', 'Linear Regression'),
+#     ],
+#     'clustering': [
+#         ('kmeans', 'K-Means Clustering'),
+#     ],
+# }
+
 # Define available model choices
 # MODEL_CHOICES = [
 #     ('logistic_regression', 'Logistic Regression'),

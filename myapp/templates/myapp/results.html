@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
+    <style>
+        .content {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 50px auto;
+            max-width: 800px;
+        }
+
+        .btn-group {
+            margin-top: 20px;
+        }
+
+        .btn-group a {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <div class="container mt-5">
+        <div class="content">
+            <h2>Results for {{ task_type|title }} using {{ model_type_selected|title }}</h2>
+            
+            {% if task_type == "classification" %}
+                <h3>Accuracy:</h3>
+                <pre>{{ insights.accuracy }}</pre>
+                <h3>Classification Report:</h3>
+                <pre>{{ insights.classification_report }}</pre>
+                <h3>Confusion Matrix:</h3>
+                <pre>{{ insights.confusion_matrix }}</pre>
+            {% elif task_type == "regression" %}
+                <h3>Mean Squared Error:</h3>
+                <pre>{{ insights.mean_squared_error }}</pre>
+            {% elif task_type == "clustering" %}
+                <h3>Silhouette Score:</h3>
+                <pre>{{ insights.silhouette_score }}</pre>
+                <h3>Cluster Centers:</h3>
+                <pre>{{ insights.cluster_centers }}</pre>
+            {% endif %}
+            
+            <div class="btn-group">
+                <a href="{% url 'select_task_model' %}" class="btn btn-primary">Back to Model Selection</a>
+                <a href="{% url 'upload_file' %}" class="btn btn-secondary">Back to Upload</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include particle effects -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="{% static 'myapp/particles-config.js' %}"></script>
+    <script src="{% static 'myapp/main.js' %}"></script>
+</body>
+</html>
