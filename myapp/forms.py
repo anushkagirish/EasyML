@@ -40,7 +40,7 @@ MODEL_CHOICES = [
 
 class UploadFileForm(forms.Form):
     file = forms.FileField(label="Select CSV File")   
-    model_type = forms.ChoiceField(choices=MODEL_CHOICES, label='Model Type')
+    #model_type = forms.ChoiceField(choices=MODEL_CHOICES, label='Model Type')
 
 
     def clean_file(self):

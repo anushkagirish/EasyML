@@ -7,6 +7,14 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'myapp/style.css' %}">
     <style>
+
+        html, body {
+            height: auto; /* Ensure height grows */
+            overflow-y: scroll; /* Enable scrolling */
+            margin: 0;
+            padding: 0;
+        }
+        
         .content {
             background: rgba(0, 0, 0, 0.8);
             color: white;
@@ -14,14 +22,19 @@
             border-radius: 10px;
             margin: 50px auto;
             max-width: 800px;
+            height: auto;
+            overflow: visible;
         }
 
         .btn-group {
             margin-top: 20px;
         }
-
+        .download-btn{
+            text-decoration: none;
+        }
         .btn-group a {
             margin-right: 10px;
+            text-decoration: none;
         }
     </style>
 </head>
@@ -31,7 +44,8 @@
     <div class="container mt-5">
         <div class="content">
             <h2>Results for {{ task_type|title }} using {{ model_type_selected|title }}</h2>
-            
+            <br>
+            <br>
             {% if task_type == "classification" %}
                 <h3>Accuracy:</h3>
                 <pre>{{ insights.accuracy }}</pre>
@@ -39,19 +53,54 @@
                 <pre>{{ insights.classification_report }}</pre>
                 <h3>Confusion Matrix:</h3>
                 <pre>{{ insights.confusion_matrix }}</pre>
+                <br>
             {% elif task_type == "regression" %}
-                <h3>Mean Squared Error:</h3>
-                <pre>{{ insights.mean_squared_error }}</pre>
+                <h3>Model Performance:</h3>
+                <br>
+                <p><strong>Mean Squared Error (MSE):</strong> {{ insights.mse }}</p>
+                <br>
+                <p><strong>R² Score:</strong> {{ insights.r2 }}</p>
+                <br>
             {% elif task_type == "clustering" %}
-                <h3>Silhouette Score:</h3>
+                <h3>Clustering Insights:</h3>
+                <br>
+                <h3>Silhouette Score:</h3> 
+                {% if insights.error %}
+                    <h3>Error:</h3>
+                    <pre>{{ insights.error }}</pre>
+                {% endif %}
                 <pre>{{ insights.silhouette_score }}</pre>
+                
                 <h3>Cluster Centers:</h3>
                 <pre>{{ insights.cluster_centers }}</pre>
+                <br>
             {% endif %}
-            
+            {% if insights.regression_graph %}
+                <img src="{% static insights.regression_graph %}" alt="Regression Plot">
+            {% endif %}
+
+            <!-- {% if insights.confusion_matrix_graph %}
+                <img src="{{ insights.confusion_matrix_graph }}" alt="Confusion Matrix">
+            {% endif %} -->
+            {% if insights.confusion_matrix_graph %}
+                <img src="{% static insights.confusion_matrix_graph %}" alt="Confusion Matrix">
+            {% endif %}
+
+
+            {% if insights.clustering_graph %}
+                <img src="{% static insights.clustering_graph %}" alt="Clustering Plot">
+            {% endif %}
+
+            <br><br>
+            <h3>Download the Model:</h3>
+            <br>
+            <a href="{% url 'download_model' %}" class="btn download-btn mr-2">Download Model</a>
+
+            <br>
+            <br>
             <div class="btn-group">
-                <a href="{% url 'select_task_model' %}" class="btn btn-primary">Back to Model Selection</a>
-                <a href="{% url 'upload_file' %}" class="btn btn-secondary">Back to Upload</a>
+                <a href="{% url 'select_task_model' %}" class="btn upload-btn mr-2">Back to Model Selection</a>
+                <a href="{% url 'upload_file' %}" class="btn upload-btn mr-2">Back to Upload</a>
             </div>
         </div>
     </div>

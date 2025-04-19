@@ -27,8 +27,8 @@
     <!-- Upload form section (initially hidden) -->
     <div class="container" id="upload-screen" style="display: none;">
         <div class="form-content">
-            <h2>Upload CSV File</h2>
-            <h2>Select Model Type</h2>
+            <h2>Upload your Dataset</h2>
+            <br>
             <form  id="upload-form" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
@@ -41,11 +41,11 @@
                 </div>
 
                 <!-- Model type dropdown field -->
-                <div class="form-group">
+                <!-- <div class="form-group">
                     {{ form.model_type.label_tag }}
                     {{ form.model_type }}
                     {{ form.model_type.errors }}
-                </div>
+                </div> -->
 
                 <!-- Submit button -->
                 <button type="submit" class="upload-btn">Upload and Preprocess</button>
